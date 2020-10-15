@@ -12,6 +12,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
     <PackageReference Include="Codecov" Version="1.10.0" />
+    <PackageReference Include="TCache.Redis" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,5 +21,6 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Attributes\" />
   </ItemGroup>
 </Project>

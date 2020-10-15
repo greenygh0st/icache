@@ -8,12 +8,19 @@ namespace iCache.API.Services
     {
         private TCacheService _cacheService;
 
-        public async Task<bool> SetKey(string keyName, object value, int? expirationInSeconds)
+        public KeyService()
         {
-            return expirationInSeconds != null ?
-                await _cacheService.SetObjectAsKeyValue(keyName, value, TimeSpan.FromSeconds((int)expirationInSeconds))
-                :
-                await _cacheService.SetObjectAsKeyValue(keyName, value);
+            _cacheService = new TCacheService(Configuration.RedisConnection);
+        }
+
+        public async Task<bool> SetKey(string keyName, object value)
+        {
+            return await _cacheService.SetObjectAsKeyValue(keyName, value);
+        }
+
+        public async Task<bool> SetKey(string keyName, object value, int expirationInSeconds)
+        {
+            return await _cacheService.SetObjectAsKeyValue(keyName, value, TimeSpan.FromSeconds(expirationInSeconds));
         }
 
         public async Task<string> FetchKey(string keyName)

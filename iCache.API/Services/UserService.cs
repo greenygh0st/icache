@@ -21,12 +21,12 @@ namespace iCache.API.Services
 
         public async Task<User> GetUser(string id)
         {
-            return await _cacheService.GetValueFromKey<User>(id);
+            return await _cacheService.GetValueFromKey<User>(_userPrefix + id);
         }
 
         public async Task<User> GetUser(User user)
         {
-            return await _cacheService.GetValueFromKey<User>(user._Id.ToString());
+            return await _cacheService.GetValueFromKey<User>(_userPrefix + user._Id.ToString());
         }
 
         public async Task<bool> AuthenticateUser(string id, string password)
@@ -34,7 +34,7 @@ namespace iCache.API.Services
             User user = await GetUser(id);
 
             if (user != null)
-                return user.Password == Hash(password, user.Password.Split(".")[1]);
+                return user.Password == $"{Hash(password, user.Password.Split(".")[1])}.{user.Password.Split(".")[1]}";
 
             return false;
         }
@@ -139,7 +139,6 @@ namespace iCache.API.Services
             {
                 rng.GetBytes(salt);
             }
-            Console.WriteLine($"Salt Generated: {Convert.ToBase64String(salt)}");
 
             return Convert.ToBase64String(salt);
         }

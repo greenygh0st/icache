@@ -17,7 +17,7 @@ namespace iCache.API
 
     public static class Configuration
     {
-        public static readonly string RedisConnection = Environment.GetEnvironmentVariable("ICACHE_REDIS_URI");
+        public static readonly string RedisConnection = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI")) ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI");
         public static readonly string AdminUserClient = Environment.GetEnvironmentVariable("ICACHE_ADMIN_USER");
         public static readonly string AdminPassword = Environment.GetEnvironmentVariable("ICACHE_ADMIN_PASSWORD");
     }

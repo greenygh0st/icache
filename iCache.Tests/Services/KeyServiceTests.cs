@@ -1,38 +1,49 @@
 using System;
 using Xunit;
+using iCache.API.Services;
+using System.Threading.Tasks;
 
 namespace iCache.Tests
 {
     public class KeyServiceTests
     {
         [Fact]
-        public void CreateKey()
+        public async Task CreateAndRemoveKey()
         {
+            using (KeyService _keyService = new KeyService())
+            {
+                await _keyService.SetKey("testkey", "test123");
 
+                string result = await _keyService.FetchKey("testkey");
+
+                // check to make sure that the value exists
+                Assert.NotNull(result);
+                Assert.Equal("test123", result);
+
+                await _keyService.RemoveKey("testkey");
+                string resultCleared = await _keyService.FetchKey("testkey");
+                Assert.True(string.IsNullOrEmpty(resultCleared));
+            }
         }
 
         [Fact]
-        public void CreateKeyWithExpiration()
+        public async Task CreateKeyWithExpiration()
         {
+            using (KeyService _keyService = new KeyService())
+            {
+                await _keyService.SetKey("testkey1", "test123", 7);
 
-        }
+                string result = await _keyService.FetchKey("testkey1");
 
-        [Fact]
-        public void FetchKey()
-        {
+                // check to make sure that the value exists
+                Assert.NotNull(result);
+                Assert.Equal("test123", result);
 
-        }
+                await Task.Delay(TimeSpan.FromSeconds(8));
 
-        [Fact]
-        public void FetchExpiredKey()
-        {
-
-        }
-
-        [Fact]
-        public void RemoveKey()
-        {
-
+                string resultCleared = await _keyService.FetchKey("testkey1");
+                Assert.True(string.IsNullOrEmpty(resultCleared));
+            }
         }
     }
 }
