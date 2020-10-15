@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.API", "iCache.API\iCache.API.csproj", "{032F65C6-3D16-4294-9EB6-469BC25A2391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Tests", "iCache.Tests\iCache.Tests.csproj", "{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F84ADB3D-99DB-421F-936C-03BA3C5978B5}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{032F65C6-3D16-4294-9EB6-469BC25A2391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{032F65C6-3D16-4294-9EB6-469BC25A2391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{032F65C6-3D16-4294-9EB6-469BC25A2391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{032F65C6-3D16-4294-9EB6-469BC25A2391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

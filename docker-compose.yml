@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  icache.api:
+    image: ${DOCKER_REGISTRY-}icache
+    build:
+      context: .
+      dockerfile: iCache.API/Dockerfile
