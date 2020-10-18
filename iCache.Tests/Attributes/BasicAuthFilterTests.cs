@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using iCache.API.Services;
 using iCache.API.Models;
-using iCache.API.Filters;
+//using iCache.API.Filters;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using iCache.API.Filters;
 using iCache.API.Models;
 using iCache.API.Services;
 using Microsoft.AspNetCore.Authorization;
