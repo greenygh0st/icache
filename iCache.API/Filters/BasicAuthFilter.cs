@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using iCache.API.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -11,7 +13,7 @@ namespace iCache.API.Filters
     {
         private readonly string _realm;
 
-        public BasicAuthFilter(string realm)
+        public BasicAuthFilter(string realm = "@my-realm")
         {
             _realm = realm;
             if (string.IsNullOrWhiteSpace(_realm))
@@ -24,7 +26,7 @@ namespace iCache.API.Filters
         {
             try
             {
-                string authHeader = context.HttpContext.Request.Headers["Authorization"];
+                string authHeader = context.HttpContext?.Request?.Headers["Authorization"];
                 if (authHeader != null)
                 {
                     var authHeaderValue = AuthenticationHeaderValue.Parse(authHeader);
@@ -45,7 +47,7 @@ namespace iCache.API.Filters
 
                 ReturnUnauthorizedResult(context);
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 ReturnUnauthorizedResult(context);
             }
@@ -53,16 +55,17 @@ namespace iCache.API.Filters
 
         public bool IsAuthorized(AuthorizationFilterContext context, string username, string password)
         {
-            //var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-            //return userService.IsValidUser(username, password);
-            // TODO: make this real
-            return true;
+            using (UserService userService = new UserService())
+            {
+                bool isAuthorized = userService.AuthenticateUser(username, password).Result;
+
+                return isAuthorized;
+            }
         }
 
         private void ReturnUnauthorizedResult(AuthorizationFilterContext context)
         {
-            // Return 401 and a basic authentication challenge (causes browser to show login dialog)
-            context.HttpContext.Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{_realm}\"";
+            // context.HttpContext.Response.Headers["WWW-Authenticate"] = "Basic auth failed"; //$"Basic realm=\"{_realm}\"";
             context.Result = new UnauthorizedResult();
         }
     }

@@ -13,6 +13,7 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
     <PackageReference Include="Codecov" Version="1.10.0" />
     <PackageReference Include="TCache.Redis" Version="1.0.3" />
+    <PackageReference Include="Moq" Version="4.14.7" />
   </ItemGroup>
 
   <ItemGroup>
