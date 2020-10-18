@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace iCache.API.Models
+namespace iCache.Common.Models
 {
     public class JsonError : JsonStatus
     {

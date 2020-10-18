@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using iCache.API.Exceptions;
-using iCache.API.Models;
+using iCache.Common.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using TCache;
 

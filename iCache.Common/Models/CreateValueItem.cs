@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace iCache.API.Models
+namespace iCache.Common.Models
 {
     public class CreateValueItem : ValueItem
     {

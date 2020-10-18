@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\iCache.API\iCache.API.csproj" />
+    <ProjectReference Include="..\iCache.Common\iCache.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

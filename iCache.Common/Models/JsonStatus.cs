@@ -1,7 +1,7 @@
 ﻿using System;
-namespace iCache.API.Models
+namespace iCache.Common.Models
 {
-    public class QueueItem
+    public class JsonStatus
     {
         public string Message { get; set; }
     }

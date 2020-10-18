@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using iCache.API.Models;
+using iCache.Common.Models;
 using iCache.API.Services;
 using Xunit;
 
