@@ -45,5 +45,22 @@ namespace iCache.Tests
                 Assert.True(string.IsNullOrEmpty(resultCleared));
             }
         }
+
+        [Fact]
+        public async Task KeyExists()
+        {
+            using (KeyService _keyService = new KeyService())
+            {
+                string keyName = "testkey4";
+
+                await _keyService.SetKey(keyName, "test123");
+
+                Assert.True(await _keyService.KeyExists(keyName));
+
+                await _keyService.RemoveKey(keyName);
+
+                Assert.False(await _keyService.KeyExists(keyName));
+            }
+        }
     }
 }

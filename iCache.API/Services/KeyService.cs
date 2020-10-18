@@ -33,6 +33,11 @@ namespace iCache.API.Services
             return await _cacheService.RemoveKey(keyName);
         }
 
+        public async Task<bool> KeyExists(string keyName)
+        {
+            return await _cacheService.KeyExists(keyName);
+        }
+
         public void Dispose()
         {
             ((IDisposable)_cacheService).Dispose();

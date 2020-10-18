@@ -3,22 +3,35 @@ using System.Runtime.InteropServices;
 
 namespace iCache.API
 {
-    public static class OperatingSystem
-    {
-        public static bool IsWindows() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-        public static bool IsMacOS() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-
-        public static bool IsLinux() =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-    }
-
     public static class Configuration
     {
-        public static readonly string RedisConnection = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI")) ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI");
-        public static readonly string AdminUserClient = Environment.GetEnvironmentVariable("ICACHE_ADMIN_USER");
-        public static readonly string AdminPassword = Environment.GetEnvironmentVariable("ICACHE_ADMIN_PASSWORD");
+        /// <summary>
+        /// The URI for the Redis connection. Default: localhost:6379
+        /// </summary>
+        public static readonly string RedisConnection =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI", EnvironmentVariableTarget.Machine))
+                ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI", EnvironmentVariableTarget.Machine)
+            :
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI"))
+                ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI")
+            ;
+        /// <summary>
+        /// Admin user client id
+        /// </summary>
+        public static readonly string AdminUserClient =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 
+                Environment.GetEnvironmentVariable("ICACHE_ADMIN_USER", EnvironmentVariableTarget.Machine)
+            :
+                Environment.GetEnvironmentVariable("ICACHE_ADMIN_USER");
+        /// <summary>
+        /// Admin password
+        /// </summary>
+        public static readonly string AdminPassword =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                Environment.GetEnvironmentVariable("ICACHE_ADMIN_PASSWORD", EnvironmentVariableTarget.Machine)
+            :
+                Environment.GetEnvironmentVariable("ICACHE_ADMIN_PASSWORD")
+            ;
     }
 }

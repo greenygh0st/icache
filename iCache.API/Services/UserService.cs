@@ -9,7 +9,12 @@ using TCache;
 
 namespace iCache.API.Services
 {
-    public class UserService : IDisposable
+    public interface IUserService
+    {
+        Task<bool> Authenticate(string id, string password);
+    }
+
+    public class UserService : IDisposable, IUserService
     {
         private TCacheService _cacheService;
         private string _userPrefix = "user:";
@@ -19,17 +24,33 @@ namespace iCache.API.Services
             _cacheService = new TCacheService(Configuration.RedisConnection);
         }
 
+        /// <summary>
+        /// Get a user
+        /// </summary>
+        /// <param name="id"><see cref="string"/> GUID for user.</param>
+        /// <returns><see cref="User"/> object</returns>
         public async Task<User> GetUser(string id)
         {
             return await _cacheService.GetValueFromKey<User>(_userPrefix + id);
         }
 
+        /// <summary>
+        /// Get a user based on thier user object
+        /// </summary>
+        /// <param name="user"><see cref="User"/> you want to get</param>
+        /// <returns><see cref="User"/> object</returns>
         public async Task<User> GetUser(User user)
         {
             return await _cacheService.GetValueFromKey<User>(_userPrefix + user._Id.ToString());
         }
 
-        public async Task<bool> AuthenticateUser(string id, string password)
+        /// <summary>
+        /// Authenticate a user
+        /// </summary>
+        /// <param name="id"><see cref="string"/> of user <see cref="Guid"/>.</param>
+        /// <param name="password">Plaintext password you want to authenciate the user with</param>
+        /// <returns><see cref="bool"/>, indicating whether or not the authentication was successful</returns>
+        public async Task<bool> Authenticate(string id, string password)
         {
             User user = await GetUser(id);
 
@@ -39,6 +60,11 @@ namespace iCache.API.Services
             return false;
         }
 
+        /// <summary>
+        /// Create a new user
+        /// </summary>
+        /// <param name="user"><see cref="CreateUser"/> required information to create a user</param>
+        /// <returns></returns>
         public async Task<User> CreateUser(CreateUser user)
         {
             var (Hashed, Plaintext) = await CreateAndHashPassword();
@@ -58,6 +84,11 @@ namespace iCache.API.Services
             return newUser;
         }
 
+        /// <summary>
+        /// Remove a user
+        /// </summary>
+        /// <param name="removeUser"></param>
+        /// <returns></returns>
         public async Task<bool> RemoveUser(User removeUser)
         {
             User foundUser = await GetUser(removeUser);
@@ -70,6 +101,11 @@ namespace iCache.API.Services
             return true;
         }
 
+        /// <summary>
+        /// Re-generate the password for the provided user.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<User> RegeneratePassword(User user)
         {
             User foundUser = await GetUser(user._Id.ToString());
@@ -91,6 +127,8 @@ namespace iCache.API.Services
             throw new UserNotFoundException();
         }
 
+        #region Private Methods
+
         private async Task<(string Hashed, string Plaintext)> CreateAndHashPassword()
         {
             string randomPassword = await Task.FromResult(GenerateRandomPassword());
@@ -104,18 +142,11 @@ namespace iCache.API.Services
 
         private string GenerateRandomPassword()
         {
-            try
-            {
-                Random random = new Random();
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&!#$_-";
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&!#$_-";
 
-                return new string(Enumerable.Repeat(chars, 24)
-                  .Select(s => s[random.Next(s.Length)]).ToArray());
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return new string(Enumerable.Repeat(chars, 24)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         private string Hash(string password, string storedSalt = null)
@@ -147,5 +178,7 @@ namespace iCache.API.Services
         {
             ((IDisposable)_cacheService).Dispose();
         }
+
+        #endregion
     }
 }

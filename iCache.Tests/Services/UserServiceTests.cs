@@ -100,7 +100,7 @@ namespace iCache.Tests
                 // plain text password wont have the dot
                 Assert.Single(plainTextPassword.Split("."));
 
-                Assert.True(await userService.AuthenticateUser(createdUser._Id.ToString(), plainTextPassword));
+                Assert.True(await userService.Authenticate(createdUser._Id.ToString(), plainTextPassword));
 
                 // remove the user
                 await userService.RemoveUser(createdUser);
