@@ -1,4 +1,4 @@
 ignore:
-  - "Program.cs"
-  - "Startup.cs"
+  - "iCache.API/Program.cs"
+  - "iCache.API/Startup.cs"
   - "iCache.Common/Models"
