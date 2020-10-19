@@ -34,14 +34,14 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore iCache.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test -c Release --verbosity normal --collect:"XPlat Code Coverage" /p:CI=true
+      run: dotnet build ./iCache.API/iCache.API.csproj --configuration Release --no-restore
+    - name: API Tests
+      run: dotnet test ./iCache.Tests/iCache.Tests.csproj -c Release --verbosity normal --collect:"XPlat Code Coverage" /p:CI=true
       
       # Make sure we have proper coverage
-    - name: Report Coverage
+    - name: Report Coverage for API Tests
       uses: codecov/codecov-action@v1
       with:
         file: ./iCache.Tests/TestResults/**/coverage.cobertura.xml
