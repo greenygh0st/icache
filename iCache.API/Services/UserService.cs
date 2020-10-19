@@ -127,6 +127,16 @@ namespace iCache.API.Services
             throw new UserNotFoundException();
         }
 
+        /// <summary>
+        /// Check to see if a user exists
+        /// </summary>
+        /// <param name="user"><see cref="User"/> object which contains a valid user id</param>
+        /// <returns></returns>
+        public async Task<bool> UserExists(User user)
+        {
+            return await _cacheService.KeyExists(_userPrefix + user._Id.ToString());
+        }
+
         #region Private Methods
 
         private async Task<(string Hashed, string Plaintext)> CreateAndHashPassword()

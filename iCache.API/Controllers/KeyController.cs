@@ -32,9 +32,14 @@ namespace iCache.API.Controllers
                 {
                     if (await keyService.KeyExists($"{User.Identity.Name}:{key}"))
                     {
-                        return Ok(new ValueItem {
-                            Key = key,
-                            Value = await keyService.FetchKey($"{User.Identity.Name}:{key}")
+                        return Ok(new JsonWithResponse
+                        {
+                            Message = "success",
+                            Response = new ValueItem
+                            {
+                                Key = key,
+                                Value = await keyService.FetchKey($"{User.Identity.Name}:{key}")
+                            }
                         });
                     } else
                     {
@@ -87,9 +92,12 @@ namespace iCache.API.Controllers
                         :
                         await keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value, (int)value.Expiration);
 
-                    return Created($"/key/{value.Key}", new ValueItem {
-                        Key = value.Key,
-                        Value = value.Value
+                    return Created($"/key/{value.Key}", new JsonWithResponse {
+                        Message = "created",
+                        Response = new ValueItem {
+                            Key = value.Key,
+                            Value = value.Value
+                        }
                     });
                 }
             } else

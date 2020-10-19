@@ -24,9 +24,13 @@ namespace iCache.API.Controllers
                 {
                     string message = await queueService.PullFromQueue(queueName, false);
 
-                    return Ok(new QueueMessage {
-                        QueueName = queueName,
-                        Message = message
+                    return Ok(new JsonWithResponse {
+                        Message = "success",
+                        Response = new QueueMessage
+                        {
+                            QueueName = queueName,
+                            Message = message
+                        }
                     });
                 } else
                 {
@@ -44,11 +48,11 @@ namespace iCache.API.Controllers
                 {
                     string message = await queueService.PullFromQueue(queueName, true);
 
-                    return Ok(new QueueMessage
+                    return Ok(new JsonWithResponse { Message = "deleted", Response = new QueueMessage
                     {
                         QueueName = queueName,
                         Message = message
-                    });
+                    }});
                 }
                 else
                 {
