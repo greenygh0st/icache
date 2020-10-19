@@ -1,3 +1,4 @@
 ignore:
   - "Program.cs"
   - "Startup.cs"
+  - "iCache.Common/Models"
