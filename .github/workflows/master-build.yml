@@ -66,7 +66,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push
+    - name: Build and push iCache to Docker
       uses: docker/build-push-action@v2
       with:
         context: .
@@ -74,3 +74,16 @@ jobs:
         platforms: linux/amd64,linux/arm64,linux/386
         push: true
         tags: greenygh0st/icache:${{ steps.get_version.outputs.RELEASE_VERSION }}
+    
+    # Publish iCache C# client to NuGet
+    - name: publish on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: iCache.Client/iCache.Client.csproj
+        VERSION_REGEX: <PackageVersion>(.*)<\/PackageVersion>
+        # don't tag the commit
+        TAG_COMMIT: false
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{secrets.NUGET_KEY}}
