@@ -62,7 +62,8 @@ namespace iCache.API.Controllers
                 {
                     string message = await queueService.PullFromQueue(queueName, true);
 
-                    return new JsonWithResponse { Message = "deleted", Response = new QueueMessage
+                    return new JsonWithResponse { Message = "deleted",
+                    Response = new QueueMessage
                     {
                         QueueName = queueName,
                         Message = message
