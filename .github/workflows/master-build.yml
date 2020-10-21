@@ -7,7 +7,7 @@ on:
   #  branches: [ master ]
 
 jobs:
-  build:
+  build-api:
 
     runs-on: ubuntu-latest
     
@@ -45,3 +45,11 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         file: ./iCache.Tests/TestResults/**/coverage.cobertura.xml
+    - name: Get version
+      id: get_version
+      uses: greenygh0st/net-proj-release-version@v1
+      with:
+        # Filepath of the *.csproj file, relative to root of repository
+        PROJ_FILE: ./iCache.API/iCache.API.csproj
+    - name: Show Version
+      run: echo "${{ steps.get_version.outputs.RELEASE_VERSION }}"
