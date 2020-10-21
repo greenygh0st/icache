@@ -76,7 +76,7 @@ jobs:
         tags: greenygh0st/icache:${{ steps.get_version.outputs.RELEASE_VERSION }}
     
     # Publish iCache C# client to NuGet
-    - name: publish on version change
+    - name: publish icache C# client on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
