@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>iCache.Redis.Client</PackageId>
+    <PackageVersion>0.0.1</PackageVersion>
+    <Authors>Dale Myszewski &lt;dale@bubblelabs.dev&gt;</Authors>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageProjectUrl>https://github.com/greenygh0st/icache</PackageProjectUrl>
+    <Title>iCache.Redis.Client</Title>
   </PropertyGroup>
 
   <ItemGroup>
