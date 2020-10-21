@@ -10,11 +10,19 @@ using iCache.API.Services;
 
 namespace iCache.API.Controllers
 {
+    /// <summary>
+    /// Add, remove and update user password. Note: this controller is only accessible with the pre-defined admin credentials.
+    /// </summary>
     [Route("api/user")]
     [ApiController]
     [Authorize(Roles="Admin")]
     public class UserController : ControllerBase
     {
+        /// <summary>
+        /// Create a user. Note: Only accessible with the pre-defined admin credentials.
+        /// </summary>
+        /// <param name="createUser"><see cref="CreateUser"/></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUser createUser)
         {
@@ -36,6 +44,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a current user. Note: Only accessible with the pre-defined admin credentials.
+        /// </summary>
+        /// <param name="userId">The id of the user that you want to remove</param>
+        /// <returns></returns>
         [HttpDelete("{userId}")]
         public async Task<IActionResult> RemoveUser(Guid userId)
         {
@@ -53,6 +66,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Regenerate a user password. Note: Only accessible with the pre-defined admin credentials.
+        /// </summary>
+        /// <param name="userId">The password of the user that you want to update</param>
+        /// <returns></returns>
         [HttpPost("{userId}/password")]
         public async Task<IActionResult> RegenUserPassword(Guid userId)
         {

@@ -19,9 +19,9 @@ namespace iCache.API.Controllers
     public class KeyController : ControllerBase
     {
         /// <summary>
-        /// Get the value for the specified key
+        /// Get the value for the specified key from your user context
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The key for which you want to retrieve a value</param>
         /// <returns></returns>
         [HttpGet("{key}")]
         public async Task<IActionResult> GetKey(string key)
@@ -52,6 +52,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a key from your user context
+        /// </summary>
+        /// <param name="key">The key which you want to remove</param>
+        /// <returns><see cref="JsonStatus"/> indicated if the operation was successful</returns>
         [HttpDelete("{key}")]
         public async Task<IActionResult> DeleteKey(string key)
         {
@@ -80,6 +85,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a key to your user context
+        /// </summary>
+        /// <param name="value"><see cref="CreateValueItem"/>Which contains the desired key and value</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateKey([FromBody] CreateValueItem value)
         {

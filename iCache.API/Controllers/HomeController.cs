@@ -16,7 +16,7 @@ namespace iCache.API.Controllers
     public class HomeController : ControllerBase
     {
         /// <summary>
-        /// Meant to provide simple up or down endpoint
+        /// Meant to provide simple up or down response
         /// </summary>
         /// <returns><see cref="JsonStatus"/></returns>
         [HttpGet]

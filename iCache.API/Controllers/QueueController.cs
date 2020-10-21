@@ -10,11 +10,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace iCache.API.Controllers
 {
+    /// <summary>
+    /// Allows you to add messages to queues. Queues are not user context specific.
+    /// </summary>
     [Route("api/queue")]
     [ApiController]
     [Authorize]
     public class QueueController : ControllerBase
     {
+        /// <summary>
+        /// Pop a message from a queue. Using this method the popped message remains in the queue until delete is called. Note: Queues are not user context specific.
+        /// </summary>
+        /// <param name="queueName">The queue you want to pop from</param>
+        /// <returns>JsonResponse with QueueMessage</returns>
         [HttpGet("{queueName}")]
         public async Task<IActionResult> PopFromQueue(string queueName)
         {
@@ -39,6 +47,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Pop and delete a message from the queue. Note: Queues are not user context specific.
+        /// </summary>
+        /// <param name="queueName">The queue you want to delete from</param>
+        /// <returns>JsonResponse with QueueMessage</returns>
         [HttpDelete("{queueName}")]
         public async Task<IActionResult> DeleteFromQueue(string queueName)
         {
@@ -61,6 +74,11 @@ namespace iCache.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Push a set of messages to a queue. Note: Queues are not user context specific, make sure you are pushing the correct message type.
+        /// </summary>
+        /// <param name="queueMessages"><see cref="QueueMessages"/>. A set of messages you want to push to a queue</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> PushToQueue([FromBody] QueueMessages queueMessages)
         {
