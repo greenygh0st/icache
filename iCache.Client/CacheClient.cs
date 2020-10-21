@@ -30,6 +30,18 @@ namespace iCache.Client
         /// <param name="password">valid password</param>
         public CacheClient(string serviceUri, string username, string password)
         {
+            if (string.IsNullOrEmpty(serviceUri))
+                serviceUri = Environment.GetEnvironmentVariable("ICACHE_CLIENT_SERVICEURI");
+
+            if (string.IsNullOrEmpty(username))
+                username = Environment.GetEnvironmentVariable("ICACHE_CLIENT_USERNAME");
+
+            if (string.IsNullOrEmpty(password))
+                password = Environment.GetEnvironmentVariable("ICACHE_CLIENT_PASSWORD");
+
+            if (string.IsNullOrEmpty(serviceUri))
+                throw new ArgumentNullException("username", "You must supply the service URI parameter!");
+
             if (string.IsNullOrEmpty(username))
                 throw new ArgumentNullException("username", "You must supply the username parameter!");
 
