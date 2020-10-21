@@ -5,6 +5,8 @@
     <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>43fe2273-1c0d-4fab-aa1f-06905e50e4d2</UserSecretsId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <ReleaseVersion>0.9.0</ReleaseVersion>
   </PropertyGroup>
 
 
