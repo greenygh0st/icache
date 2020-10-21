@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace iCache.API
 {
+    /// <summary>
+    /// Global compiled config
+    /// </summary>
     public static class Configuration
     {
         /// <summary>

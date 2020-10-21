@@ -24,7 +24,7 @@ namespace iCache.API.Controllers
         /// <param name="key">The key for which you want to retrieve a value</param>
         /// <returns></returns>
         [HttpGet("{key}")]
-        public async Task<IActionResult> GetKey(string key)
+        public async Task<JsonWithResponse> GetKey(string key)
         {
             if (!string.IsNullOrEmpty(key))
             {
@@ -32,7 +32,7 @@ namespace iCache.API.Controllers
                 {
                     if (await keyService.KeyExists($"{User.Identity.Name}:{key}"))
                     {
-                        return Ok(new JsonWithResponse
+                        return new JsonWithResponse
                         {
                             Message = "success",
                             Response = new ValueItem
@@ -40,15 +40,17 @@ namespace iCache.API.Controllers
                                 Key = key,
                                 Value = await keyService.FetchKey($"{User.Identity.Name}:{key}")
                             }
-                        });
+                        };
                     } else
                     {
-                        return NotFound(new JsonStatus { Message = "Key not found!" });
+                        Response.StatusCode = 404;
+                        return new JsonWithResponse { Message = "Key not found!" };
                     }
                 }
             } else
             {
-                return BadRequest(new JsonStatus { Message = "Key value not supplied!" });
+                Response.StatusCode = 400;
+                return new JsonWithResponse { Message = "Key value not supplied!" };
             }
         }
 
@@ -58,7 +60,7 @@ namespace iCache.API.Controllers
         /// <param name="key">The key which you want to remove</param>
         /// <returns><see cref="JsonStatus"/> indicated if the operation was successful</returns>
         [HttpDelete("{key}")]
-        public async Task<IActionResult> DeleteKey(string key)
+        public async Task<JsonStatus> DeleteKey(string key)
         {
             if (!string.IsNullOrEmpty(key))
             {
@@ -68,20 +70,22 @@ namespace iCache.API.Controllers
                     {
                         await keyService.RemoveKey($"{User.Identity.Name}:{key}");
 
-                        return Ok(new JsonStatus
+                        return new JsonStatus
                         {
                             Message = "Key deleted!"
-                        });
+                        };
                     }
                     else
                     {
-                        return NotFound(new JsonStatus { Message = "Key not found!" });
+                        Response.StatusCode = 404;
+                        return new JsonStatus { Message = "Key not found!" };
                     }
                 }
             }
             else
             {
-                return NotFound(new JsonStatus { Message = "Key not found!" });
+                Response.StatusCode = 404;
+                return new JsonStatus { Message = "Key not found!" };
             }
         }
 
@@ -91,7 +95,7 @@ namespace iCache.API.Controllers
         /// <param name="value"><see cref="CreateValueItem"/>Which contains the desired key and value</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateKey([FromBody] CreateValueItem value)
+        public async Task<JsonWithResponse> CreateKey([FromBody] CreateValueItem value)
         {
             if (ModelState.IsValid)
             {
@@ -102,20 +106,22 @@ namespace iCache.API.Controllers
                         :
                         await keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value, (int)value.Expiration);
 
-                    return Created($"/key/{value.Key}", new JsonWithResponse {
+                    Response.StatusCode = 201;
+                    return new JsonWithResponse {
                         Message = "created",
                         Response = new ValueItem {
                             Key = value.Key,
                             Value = value.Value
                         }
-                    });
+                    };
                 }
             } else
             {
-                return BadRequest(new JsonError {
+                Response.StatusCode = 400;
+                return new JsonError {
                     Message = "Invalid key request!",
                     Errors = ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()
-                });
+                };
             }
         }
     }

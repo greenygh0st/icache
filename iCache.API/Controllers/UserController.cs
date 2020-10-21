@@ -24,7 +24,7 @@ namespace iCache.API.Controllers
         /// <param name="createUser"><see cref="CreateUser"/></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUser createUser)
+        public async Task<JsonWithResponse> CreateUser([FromBody] CreateUser createUser)
         {
             if (ModelState.IsValid)
             {
@@ -32,15 +32,16 @@ namespace iCache.API.Controllers
                 {
                     User user = await userService.CreateUser(createUser);
 
-                    return Created("", new JsonWithResponse { Message = "created", Response = user });
+                    return new JsonWithResponse { Message = "created", Response = user };
                 }
             } else
             {
-                return BadRequest(new JsonError
+                Response.StatusCode = 400;
+                return new JsonError
                 {
                     Message = "Invalid user request!",
                     Errors = ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()
-                });
+                };
             }
         }
 
@@ -50,7 +51,7 @@ namespace iCache.API.Controllers
         /// <param name="userId">The id of the user that you want to remove</param>
         /// <returns></returns>
         [HttpDelete("{userId}")]
-        public async Task<IActionResult> RemoveUser(Guid userId)
+        public async Task<JsonWithResponse> RemoveUser(Guid userId)
         {
             using (UserService userService = new UserService())
             {
@@ -58,10 +59,11 @@ namespace iCache.API.Controllers
                 {
                     await userService.RemoveUser(new User { _Id = userId });
 
-                    return Ok(new JsonStatus { Message = "User removed!" });
+                    return new JsonWithResponse { Message = "User removed!" };
                 } else
                 {
-                    return NotFound(new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } });
+                    Response.StatusCode = 404;
+                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
                 }
             }
         }
@@ -72,7 +74,7 @@ namespace iCache.API.Controllers
         /// <param name="userId">The password of the user that you want to update</param>
         /// <returns></returns>
         [HttpPost("{userId}/password")]
-        public async Task<IActionResult> RegenUserPassword(Guid userId)
+        public async Task<JsonWithResponse> RegenUserPassword(Guid userId)
         {
             using (UserService userService = new UserService())
             {
@@ -80,11 +82,11 @@ namespace iCache.API.Controllers
                 {
                     User userWithNewPassword = await userService.RegeneratePassword(new User { _Id = userId });
 
-                    return Ok(new JsonWithResponse { Message = "success", Response = userWithNewPassword });
+                    return new JsonWithResponse { Message = "success", Response = userWithNewPassword };
                 }
                 else
                 {
-                    return NotFound(new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } });
+                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
                 }
             }
         }

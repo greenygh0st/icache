@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Controllers\" />
-    <Folder Include="Attributes\" />
     <Folder Include="Middleware\" />
   </ItemGroup>
 </Project>

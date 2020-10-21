@@ -24,7 +24,7 @@ namespace iCache.API.Controllers
         /// <param name="queueName">The queue you want to pop from</param>
         /// <returns>JsonResponse with QueueMessage</returns>
         [HttpGet("{queueName}")]
-        public async Task<IActionResult> PopFromQueue(string queueName)
+        public async Task<JsonWithResponse> PopFromQueue(string queueName)
         {
             using (QueueService queueService = new QueueService())
             {
@@ -32,17 +32,18 @@ namespace iCache.API.Controllers
                 {
                     string message = await queueService.PullFromQueue(queueName, false);
 
-                    return Ok(new JsonWithResponse {
+                    return new JsonWithResponse {
                         Message = "success",
                         Response = new QueueMessage
                         {
                             QueueName = queueName,
                             Message = message
                         }
-                    });
+                    };
                 } else
                 {
-                    return NotFound(new JsonStatus { Message = "Queue not found or is empty!" });
+                    Response.StatusCode = 404;
+                    return new JsonWithResponse { Message = "Queue not found or is empty!" };
                 }
             }
         }
@@ -53,7 +54,7 @@ namespace iCache.API.Controllers
         /// <param name="queueName">The queue you want to delete from</param>
         /// <returns>JsonResponse with QueueMessage</returns>
         [HttpDelete("{queueName}")]
-        public async Task<IActionResult> DeleteFromQueue(string queueName)
+        public async Task<JsonWithResponse> DeleteFromQueue(string queueName)
         {
             using (QueueService queueService = new QueueService())
             {
@@ -61,15 +62,16 @@ namespace iCache.API.Controllers
                 {
                     string message = await queueService.PullFromQueue(queueName, true);
 
-                    return Ok(new JsonWithResponse { Message = "deleted", Response = new QueueMessage
+                    return new JsonWithResponse { Message = "deleted", Response = new QueueMessage
                     {
                         QueueName = queueName,
                         Message = message
-                    }});
+                    }};
                 }
                 else
                 {
-                    return NotFound(new JsonStatus { Message = "Queue not found or is empty!" });
+                    Response.StatusCode = 404;
+                    return new JsonWithResponse { Message = "Queue not found or is empty!" };
                 }
             }
         }
@@ -80,7 +82,7 @@ namespace iCache.API.Controllers
         /// <param name="queueMessages"><see cref="QueueMessages"/>. A set of messages you want to push to a queue</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PushToQueue([FromBody] QueueMessages queueMessages)
+        public async Task<JsonWithResponse> PushToQueue([FromBody] QueueMessages queueMessages)
         {
             if (ModelState.IsValid)
             {
@@ -88,16 +90,17 @@ namespace iCache.API.Controllers
                 {
                     await queueService.PushToQueue(queueMessages.QueueName, queueMessages.Messages);
                     
-                    return Ok(new JsonStatus { Message = $"Added {queueMessages.Messages.Count} to queue: {queueMessages.QueueName}" });
+                    return new JsonWithResponse { Message = $"Added {queueMessages.Messages.Count} to queue: {queueMessages.QueueName}" };
                     
                 }
             } else
             {
-                return BadRequest(new JsonError
+                Response.StatusCode = 400;
+                return new JsonError
                 {
                     Message = "Invalid queue request!",
                     Errors = ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()
-                });
+                };
             }
         }
     }

@@ -12,7 +12,6 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Moq;
 using Xunit;
-using iCache.API.Services;
 using iCache.Common.Models;
 using iCache.API;
 using System.ComponentModel;
