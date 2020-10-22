@@ -86,6 +86,55 @@ namespace iCache.API.Controllers
                 }
                 else
                 {
+                    Response.StatusCode = 404;
+                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Lock a user account.
+        /// </summary>
+        /// <param name="userId">The user id that you want to unlock</param>
+        /// <returns></returns>
+        [HttpGet("{userId}/lock")]
+        public async Task<JsonStatus> LockUserAccount(Guid userId)
+        {
+            using (UserService userService = new UserService())
+            {
+                if (await userService.UserExists(new User { _Id = userId }))
+                {
+                    bool locked = await userService.LockUser(new User { _Id = userId });
+
+                    return new JsonStatus { Message = $"User account {userId} locked!" };
+                }
+                else
+                {
+                    Response.StatusCode = 404;
+                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Unlock a user account which has been locked.
+        /// </summary>
+        /// <param name="userId">The user id that you want to unlock</param>
+        /// <returns></returns>
+        [HttpGet("{userId}/unlock")]
+        public async Task<JsonStatus> UnlockUserAccount(Guid userId)
+        {
+            using (UserService userService = new UserService())
+            {
+                if (await userService.UserExists(new User { _Id = userId }))
+                {
+                    bool unlocked = await userService.UnlockUser(new User { _Id = userId });
+
+                    return new JsonStatus { Message = $"User account {userId} unlocked!" };
+                }
+                else
+                {
+                    Response.StatusCode = 404;
                     return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
                 }
             }

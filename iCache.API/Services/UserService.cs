@@ -158,6 +158,41 @@ namespace iCache.API.Services
         }
 
         /// <summary>
+        /// Lock the provided user
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> object for the user that you want to lock</param>
+        /// <returns></returns>
+        public async Task<bool> LockUser(User user)
+        {
+            User fetched = await GetUser(user);
+            if (!fetched.Locked)
+            {
+                fetched.Locked = true;
+                await UpdateUser(fetched);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Lock the provided user
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> object for the user that you want to lock</param>
+        /// <returns></returns>
+        public async Task<bool> UnlockUser(User user)
+        {
+            User fetched = await GetUser(user);
+            if (fetched.Locked)
+            {
+                fetched.LoginAttempts = 0;
+                fetched.Locked = false;
+                await UpdateUser(fetched);
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Check to see if a user exists
         /// </summary>
         /// <param name="user"><see cref="User"/> object which contains a valid user id</param>

@@ -185,5 +185,24 @@ namespace iCache.Tests
                 await userService.RemoveUser(createdUser);
             }
         }
+
+        [Fact]
+        public async Task LockUnlockUserAccount()
+        {
+            using (UserService userService = new UserService())
+            {
+                User createdUser = await userService.CreateUser(new CreateUser { DisplayName = "Joan" });
+
+                await userService.LockUser(createdUser);
+
+                Assert.True(await userService.UserIsLocked(createdUser));
+
+                await userService.UnlockUser(createdUser);
+
+                Assert.False(await userService.UserIsLocked(createdUser));
+
+                await userService.RemoveUser(createdUser);
+            }
+        }
     }
 }
