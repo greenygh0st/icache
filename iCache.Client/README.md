@@ -42,7 +42,7 @@ public async Task<(bool Success, string FailReason)> RemoveKey(string keyName)
 /// </summary>
 /// <param name="keyName">The name of the key you want to set</param>
 /// <param name="value">The object you want to set as the key value</param>
-/// <returns></returns>
+/// <returns>Tupal, Success boolean and string FailReason providing the failure</returns>
 public async Task<(bool Success, string FailReason)> SetKey(string keyName, object value)
 
 /// <summary>
@@ -76,7 +76,7 @@ public async Task<string> DeleteFromQueue(string queueName)
 public async Task<T> DeleteFromQueue<T>(string queueName)
 
 /// <summary>
-/// 
+/// Add an item to the queue
 /// </summary>
 /// <param name="queueName">The name of the queue.</param>
 /// <param name="messages"><see cref="List{object}"/>, collection of messages to add to the queue</param>
