@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using iCache.Common.Models;
 using iCache.API.Services;
 using Xunit;
+using System.Linq;
 
 namespace iCache.Tests
 {
@@ -139,6 +140,67 @@ namespace iCache.Tests
                 Assert.NotEqual(fetched.Password, fetchedTwo.Password);
 
                 // remove the user
+                await userService.RemoveUser(createdUser);
+            }
+        }
+
+        [Fact]
+        public async Task IsUserLocked()
+        {
+            using (UserService userService = new UserService())
+            {
+                User createdUser = await userService.CreateUser(new CreateUser { DisplayName = "Phillis" });
+
+                Assert.False(await userService.UserIsLocked(createdUser));
+
+                await userService.RemoveUser(createdUser);
+            }
+        }
+
+        [Fact]
+        public async Task NewUserPasswordIsRightLength()
+        {
+            using (UserService userService = new UserService())
+            {
+                User createdUser = await userService.CreateUser(new CreateUser { DisplayName = "Phillis" });
+
+                Assert.True(createdUser.Password.Length == 40);
+
+                await userService.RemoveUser(createdUser);
+            }
+        }
+
+        [Fact]
+        public async Task UserLockedAfterTenFailedAttempts()
+        {
+            using (UserService userService = new UserService())
+            {
+                User createdUser = await userService.CreateUser(new CreateUser { DisplayName = "Donnie" });
+
+                foreach (var item in Enumerable.Range(1, 10))
+                    await userService.Authenticate(createdUser._Id.ToString(), "not-the-right-password");
+
+                Assert.True(await userService.UserIsLocked(createdUser));
+
+                await userService.RemoveUser(createdUser);
+            }
+        }
+
+        [Fact]
+        public async Task LockUnlockUserAccount()
+        {
+            using (UserService userService = new UserService())
+            {
+                User createdUser = await userService.CreateUser(new CreateUser { DisplayName = "Joan" });
+
+                await userService.LockUser(createdUser);
+
+                Assert.True(await userService.UserIsLocked(createdUser));
+
+                await userService.UnlockUser(createdUser);
+
+                Assert.False(await userService.UserIsLocked(createdUser));
+
                 await userService.RemoveUser(createdUser);
             }
         }
