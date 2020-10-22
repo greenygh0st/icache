@@ -55,7 +55,24 @@ namespace iCache.API.Services
             User user = await GetUser(id);
 
             if (user != null)
-                return user.Password == $"{Hash(password, user.Password.Split(".")[1])}.{user.Password.Split(".")[1]}";
+                if (!user.Locked && user.Password == $"{Hash(password, user.Password.Split(".")[1])}.{user.Password.Split(".")[1]}")
+                {
+                    // zero out login attempts
+                    user.LoginAttempts = 0;
+
+                    // save back the user data
+                    await UpdateUser(user);
+
+                    return true;
+                } else
+                {
+                    // increment the login attempts
+                    user.LoginAttempts++;
+                    user.Locked = user.LoginAttempts >= 10;
+
+                    // save back the user data
+                    await UpdateUser(user);
+                }
 
             return false;
         }
@@ -73,7 +90,9 @@ namespace iCache.API.Services
             {
                 _Id = Guid.NewGuid(),
                 DisplayName = user.DisplayName,
-                Password = Hashed
+                Password = Hashed,
+                LoginAttempts = 0,
+                Locked = false
             };
 
             await _cacheService.SetObjectAsKeyValue(_userPrefix + newUser._Id.ToString(), newUser);
@@ -128,6 +147,17 @@ namespace iCache.API.Services
         }
 
         /// <summary>
+        /// Determine whether or not a user account is locked.
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> object you want to check.</param>
+        /// <returns></returns>
+        public async Task<bool> UserIsLocked(User user)
+        {
+            User fetched = await GetUser(user);
+            return fetched.Locked;
+        }
+
+        /// <summary>
         /// Check to see if a user exists
         /// </summary>
         /// <param name="user"><see cref="User"/> object which contains a valid user id</param>
@@ -138,6 +168,12 @@ namespace iCache.API.Services
         }
 
         #region Private Methods
+
+        private async Task<bool> UpdateUser(User user)
+        {
+            await _cacheService.SetObjectAsKeyValue(_userPrefix + user._Id.ToString(), user);
+            return true;
+        }
 
         private async Task<(string Hashed, string Plaintext)> CreateAndHashPassword()
         {
@@ -155,7 +191,7 @@ namespace iCache.API.Services
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&!#$_-";
 
-            return new string(Enumerable.Repeat(chars, 24)
+            return new string(Enumerable.Repeat(chars, 40)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
