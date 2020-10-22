@@ -26,15 +26,15 @@ namespace iCache.Client
         /// Base constructor for iCache client
         /// </summary>
         /// <param name="serviceUri">The base URI of the iCache service (ie https://icache.mydomain.com)</param>
-        /// <param name="username">Valid username</param>
-        /// <param name="password">valid password</param>
-        public CacheClient(string serviceUri, string username, string password)
+        /// <param name="userid">Valid userid, string literally of valid user <see cref="Guid"/></param>
+        /// <param name="password">Valid password</param>
+        public CacheClient(string serviceUri, string userid, string password)
         {
             if (string.IsNullOrEmpty(serviceUri))
                 serviceUri = Environment.GetEnvironmentVariable("ICACHE_CLIENT_SERVICEURI");
 
-            if (string.IsNullOrEmpty(username))
-                username = Environment.GetEnvironmentVariable("ICACHE_CLIENT_USERNAME");
+            if (string.IsNullOrEmpty(userid))
+                userid = Environment.GetEnvironmentVariable("ICACHE_CLIENT_USERID");
 
             if (string.IsNullOrEmpty(password))
                 password = Environment.GetEnvironmentVariable("ICACHE_CLIENT_PASSWORD");
@@ -42,13 +42,13 @@ namespace iCache.Client
             if (string.IsNullOrEmpty(serviceUri))
                 throw new ArgumentNullException("username", "You must supply the service URI parameter!");
 
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(userid))
                 throw new ArgumentNullException("username", "You must supply the username parameter!");
 
             if (string.IsNullOrEmpty(password))
                 throw new ArgumentNullException("password", "You must supply the password parameter!");
 
-            _username = username;
+            _username = userid;
             _password = password;
             _serviceUri = serviceUri;
             _authHeaderValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_username}:{_password}"));
@@ -61,10 +61,10 @@ namespace iCache.Client
         #region Keys
 
         /// <summary>
-        /// 
+        /// Fetch a key
         /// </summary>
-        /// <param name="keyName"></param>
-        /// <returns></returns>
+        /// <param name="keyName">The name of the key that you want to fetch.</param>
+        /// <returns>The key value, null if not set</returns>
         public async Task<string> FetchKey(string keyName)
         {
             var response = await _httpClient.GetAsync($"{_serviceUri}/api/key/{HttpUtility.UrlEncode(keyName)}");
@@ -73,16 +73,17 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return jsonResponse.Response;
+                var value = JsonConvert.DeserializeObject<ValueItem>(jsonResponse.Response);
+                return value.Value;
             }
 
             return null;
         }
 
         /// <summary>
-        /// 
+        /// Fetch a key
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type you want the value object to be parsed as</typeparam>
         /// <param name="keyName"></param>
         /// <returns></returns>
         public async Task<T> FetchKey<T>(string keyName)
@@ -93,7 +94,8 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return JsonConvert.DeserializeObject<T>(jsonResponse.Response);
+                var value = JsonConvert.DeserializeObject<ValueItem>(jsonResponse.Response);
+                return JsonConvert.DeserializeObject<T>(value.Value);
             }
 
             return default;
@@ -121,10 +123,10 @@ namespace iCache.Client
         }
 
         /// <summary>
-        /// 
+        /// Set a key with a given key name and value
         /// </summary>
-        /// <param name="keyName"></param>
-        /// <param name="value"></param>
+        /// <param name="keyName">The name of the key you want to set</param>
+        /// <param name="value">The object you want to set as the key value</param>
         /// <returns></returns>
         public async Task<(bool Success, string FailReason)> SetKey(string keyName, object value)
         {
@@ -207,6 +209,11 @@ namespace iCache.Client
 
         #region Queues
 
+        /// <summary>
+        /// Pop an item from a queue. Note this does not delete the item from the queue.
+        /// </summary>
+        /// <param name="queueName">The name of the queue you want to pop from</param>
+        /// <returns>String value of message or null if queue empty or missing</returns>
         public async Task<string> PopFromQueue(string queueName)
         {
             var response = await _httpClient.GetAsync($"{_serviceUri}/api/queue/{HttpUtility.UrlEncode(queueName)}");
@@ -215,12 +222,19 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return jsonResponse.Response;
+                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
+                return value.Message;
             }
 
             return null;
         }
 
+        /// <summary>
+        /// Pop an item from a queue. Note this does not delete the item from the queue.
+        /// </summary>
+        /// <typeparam name="T">Type you want to attempt to parse the message as</typeparam>
+        /// <param name="queueName">The name of the queue you want to pop from</param>
+        /// <returns>Parsed value of the message or null if queue empty or missing</returns>
         public async Task<T> PopFromQueue<T>(string queueName)
         {
             var response = await _httpClient.GetAsync($"{_serviceUri}/api/queue/{HttpUtility.UrlEncode(queueName)}");
@@ -229,12 +243,18 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return JsonConvert.DeserializeObject<T>(jsonResponse.Response);
+                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
+                return JsonConvert.DeserializeObject<T>(value.Message);
             }
 
             return default;
         }
 
+        /// <summary>
+        /// Pop and delete an item from a queue. Note this does not delete the item from the queue.
+        /// </summary>
+        /// <param name="queueName">The name of the queue you want to pop from</param>
+        /// <returns>String value of message or null if queue empty or missing</returns>
         public async Task<string> DeleteFromQueue(string queueName)
         {
             var response = await _httpClient.DeleteAsync($"{_serviceUri}/api/queue/{HttpUtility.UrlEncode(queueName)}");
@@ -243,12 +263,19 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return jsonResponse.Response;
+                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
+                return value.Message;
             }
 
             return null;
         }
 
+        /// <summary>
+        /// Pop and delete an item from a queue.
+        /// </summary>
+        /// <typeparam name="T">Type you want to attempt to parse the message as</typeparam>
+        /// <param name="queueName">The name of the queue you want to pop from</param>
+        /// <returns>Parsed value of the message or null if queue empty or missing</returns>
         public async Task<T> DeleteFromQueue<T>(string queueName)
         {
             var response = await _httpClient.DeleteAsync($"{_serviceUri}/api/queue/{HttpUtility.UrlEncode(queueName)}");
@@ -257,7 +284,8 @@ namespace iCache.Client
             {
                 string json = await response.Content.ReadAsStringAsync();
                 JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                return JsonConvert.DeserializeObject<T>(jsonResponse.Response);
+                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
+                return JsonConvert.DeserializeObject<T>(value.Message);
             }
 
             return default;
