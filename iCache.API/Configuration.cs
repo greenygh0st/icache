@@ -8,10 +8,22 @@ namespace iCache.API
     /// </summary>
     public static class Configuration
     {
+        public static string RedisConnection {
+            get {
+                if (string.IsNullOrEmpty(RedisConnectionPassword))
+                {
+                    return RedisConnectionUri;
+                } else
+                {
+                    return $"{RedisConnectionUri},password={RedisConnectionPassword}";
+                }
+            }
+        }
+
         /// <summary>
         /// The URI for the Redis connection. Default: localhost:6379
         /// </summary>
-        public static readonly string RedisConnection =
+        public static readonly string RedisConnectionUri =
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI", EnvironmentVariableTarget.Machine))
                 ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI", EnvironmentVariableTarget.Machine)
@@ -19,6 +31,16 @@ namespace iCache.API
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICACHE_REDIS_URI"))
                 ? "localhost:6379" : Environment.GetEnvironmentVariable("ICACHE_REDIS_URI")
             ;
+
+        /// <summary>
+        /// Redis Password (if exists)
+        /// </summary>
+        public static readonly string RedisConnectionPassword =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                Environment.GetEnvironmentVariable("ICACHE_REDIS_PASSWORD", EnvironmentVariableTarget.Machine)
+            :
+                Environment.GetEnvironmentVariable("ICACHE_REDIS_PASSWORD");
+
         /// <summary>
         /// Admin user client id
         /// </summary>
