@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace iCache.Common.Models
 {
+    /// <summary>
+    /// A key/value item
+    /// </summary>
     public class ValueItem : KeyItem
     {
         [Required]

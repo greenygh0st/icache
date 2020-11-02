@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace iCache.Common.Models
 {
+    /// <summary>
+    /// Used to create a user
+    /// </summary>
     public class CreateUser
     {
         [Required]
