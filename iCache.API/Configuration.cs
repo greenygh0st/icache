@@ -15,6 +15,7 @@ namespace iCache.API
                     return RedisConnectionUri;
                 } else
                 {
+                    // add the redis connection with the password
                     return $"{RedisConnectionUri},password={RedisConnectionPassword}";
                 }
             }
