@@ -125,3 +125,28 @@ jobs:
         TAG_COMMIT: false
         # API key to authenticate with NuGet server
         NUGET_KEY: ${{secrets.NUGET_KEY}}
+  
+  build-common:
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore ./iCache.Common/iCache.Common.csproj
+    - name: Build
+      run: dotnet build ./iCache.Common/iCache.Common.csproj --configuration Release --no-restore
+
+      # Publish iCache C# client to NuGet
+    - name: publish icache C# Common on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: iCache.Common/iCache.Common.csproj
+        VERSION_REGEX: <PackageVersion>(.*)<\/PackageVersion>
+        # don't tag the commit
+        TAG_COMMIT: false
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{secrets.NUGET_KEY}}
