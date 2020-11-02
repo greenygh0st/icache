@@ -79,8 +79,41 @@ jobs:
         tags: |
             greenygh0st/icache:latest
             greenygh0st/icache:${{ steps.get_version.outputs.RELEASE_VERSION }}
+  
+  build-client:
     
-    # Publish iCache C# client to NuGet
+    runs-on: ubuntu-latest
+    
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore ./iCache.Client/iCache.Client.csproj
+    - name: Build
+      run: dotnet build ./iCache.Client/iCache.Client.csproj --configuration Release --no-restore
+    # - name: Client Tests
+    #   run: dotnet test ./iCache.Tests.Client/iCache.Tests.Client.csproj -c Release --verbosity normal --collect:"XPlat Code Coverage" /p:CI=true
+
+      # Publish iCache C# client to NuGet
     - name: publish icache C# client on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
