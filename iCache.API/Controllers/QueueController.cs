@@ -83,7 +83,7 @@ namespace iCache.API.Controllers
         /// <param name="queueMessages"><see cref="QueueMessages"/>. A set of messages you want to push to a queue</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonWithResponse> PushToQueue([FromBody] QueueMessages queueMessages)
+        public async Task<JsonWithResponse> PushToQueue([FromBody] QueueMessagesPost queueMessages)
         {
             if (ModelState.IsValid)
             {

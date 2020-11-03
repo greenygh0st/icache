@@ -15,4 +15,15 @@ namespace iCache.Common.Models
         [JsonProperty("messages")]
         public List<object> Messages { get; set; }
     }
+
+    public class QueueMessagesPost
+    {
+        [Required]
+        [JsonProperty("queueName")]
+        public string QueueName { get; set; }
+        [Required]
+        [MinLength(1)]
+        [JsonProperty("messages")]
+        public List<string> Messages { get; set; }
+    }
 }
