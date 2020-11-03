@@ -17,7 +17,7 @@ namespace iCache.Tests
 
                 await queueService.QueueExists(queueName);
 
-                await queueService.PushToQueue(queueName, new List<object> { "123" });
+                await queueService.PushToQueue(queueName, new List<string> { "123" });
 
                 Assert.True(await queueService.QueueExists(queueName));
 
@@ -36,7 +36,7 @@ namespace iCache.Tests
 
                 Assert.False(await queueService.QueueExists(queueName));
 
-                await queueService.PushToQueue(queueName, new List<object> { "123" });
+                await queueService.PushToQueue(queueName, new List<string> { "123" });
 
                 Assert.True(await queueService.QueueExists(queueName));
 
@@ -55,7 +55,7 @@ namespace iCache.Tests
 
                 await queueService.QueueExists(queueName);
 
-                await queueService.PushToQueue(queueName, new List<object> { "123" });
+                await queueService.PushToQueue(queueName, new List<string> { "123" });
 
                 Assert.NotNull(await queueService.PullFromQueue(queueName, false));
 
