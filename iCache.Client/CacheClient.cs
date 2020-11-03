@@ -93,9 +93,9 @@ namespace iCache.Client
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                var value = JsonConvert.DeserializeObject<ValueItem>(jsonResponse.Response);
-                return JsonConvert.DeserializeObject<T>(value.Value);
+                JsonWithKeyValueResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithKeyValueResponse>(json);
+                var value = JsonConvert.DeserializeObject<T>(jsonResponse.Response.Value);
+                return value;
             }
 
             return default;
@@ -242,9 +242,9 @@ namespace iCache.Client
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
-                return JsonConvert.DeserializeObject<T>(value.Message);
+                JsonWithQueueMessageResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithQueueMessageResponse>(json);
+                var value = JsonConvert.DeserializeObject<T>(jsonResponse.Response.Message);
+                return value;
             }
 
             return default;
@@ -283,9 +283,9 @@ namespace iCache.Client
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                JsonWithStringResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithStringResponse>(json);
-                var value = JsonConvert.DeserializeObject<QueueMessage>(jsonResponse.Response);
-                return JsonConvert.DeserializeObject<T>(value.Message);
+                JsonWithQueueMessageResponse jsonResponse = JsonConvert.DeserializeObject<JsonWithQueueMessageResponse>(json);
+                var value = JsonConvert.DeserializeObject<T>(jsonResponse.Response.Message);
+                return value;
             }
 
             return default;
@@ -297,23 +297,27 @@ namespace iCache.Client
         /// <param name="queueName">The name of the queue.</param>
         /// <param name="messages"><see cref="List{object}"/>, collection of messages to add to the queue</param>
         /// <returns>Tupal, (bool Success, string FailReason)</returns>
-        public async Task<(bool Success, string FailReason)> PushToQueue(string queueName, List<object> messages)
+        public async Task<(bool Success, string FailReason)> PushToQueue<T>(string queueName, List<T> messages)
         {
-            List<string> finalMessages = new List<string>();
+            List<object> finalMessages = new List<object>();
 
             foreach (var message in messages)
             {
-                finalMessages.Add((message is string) ? message.ToString() : JsonConvert.SerializeObject(message));
+                string m = (message is string) ? message.ToString() : JsonConvert.SerializeObject(message);
+                finalMessages.Add(m);
             }
+
+            string content = JsonConvert.SerializeObject(new QueueMessages
+            {
+                QueueName = queueName,
+                Messages = finalMessages
+            });
 
             StringContent stringContent =
                 new StringContent(
-                    JsonConvert.SerializeObject(new QueueMessages {
-                        QueueName = queueName,
-                        Messages = finalMessages
-                    }),
+                    content,
                     Encoding.UTF8,
-                    "application/json");
+                    "application/json");;
 
             var response = await _httpClient.PostAsync($"{_serviceUri}/api/queue", stringContent);
 
