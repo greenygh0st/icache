@@ -14,7 +14,7 @@ namespace iCache.API.Services
             _cacheService = new TCacheService(Configuration.RedisConnection);
         }
 
-        public async Task<bool> PushToQueue(string queueName, List<object> values)
+        public async Task<bool> PushToQueue(string queueName, List<string> values)
         {
             return await _cacheService.PushToQueue(queueName, values);
         }

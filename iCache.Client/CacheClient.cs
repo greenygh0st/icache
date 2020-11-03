@@ -323,6 +323,7 @@ namespace iCache.Client
 
             if (response.IsSuccessStatusCode)
             {
+                string json = await response.Content.ReadAsStringAsync();
                 return (true, null);
             }
             else

@@ -8,7 +8,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageProjectUrl>https://github.com/greenygh0st/icache/tree/master/iCache.Client</PackageProjectUrl>
     <Title>iCache.Redis.Client</Title>
-    <ReleaseVersion>0.9.1</ReleaseVersion>
+    <ReleaseVersion>0.9.2</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>This is the client for iCache. See the documentation: https://github.com/greenygh0st/icache/tree/master/iCache.Client</Description>
   </PropertyGroup>
