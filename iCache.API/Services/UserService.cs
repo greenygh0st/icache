@@ -3,17 +3,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using iCache.API.Exceptions;
+using iCache.API.Interfaces;
 using iCache.Common.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using TCache;
 
 namespace iCache.API.Services
 {
-    public interface IUserService
-    {
-        Task<bool> Authenticate(string id, string password);
-    }
-
     public class UserService : IDisposable, IUserService
     {
         private TCacheService _cacheService;
@@ -204,13 +200,13 @@ namespace iCache.API.Services
 
         #region Private Methods
 
-        private async Task<bool> UpdateUser(User user)
+        public async Task<bool> UpdateUser(User user)
         {
             await _cacheService.SetObjectAsKeyValue(_userPrefix + user._Id.ToString(), user);
             return true;
         }
 
-        private async Task<(string Hashed, string Plaintext)> CreateAndHashPassword()
+        public async Task<(string Hashed, string Plaintext)> CreateAndHashPassword()
         {
             string randomPassword = await Task.FromResult(GenerateRandomPassword());
 
@@ -221,7 +217,7 @@ namespace iCache.API.Services
             return ($"{hashedPassword}.{salt}", randomPassword);
         }
 
-        private string GenerateRandomPassword()
+        public string GenerateRandomPassword()
         {
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&!#$_-";
@@ -230,7 +226,7 @@ namespace iCache.API.Services
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private string Hash(string password, string storedSalt = null)
+        public string Hash(string password, string storedSalt = null)
         {
             // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
@@ -242,7 +238,7 @@ namespace iCache.API.Services
             return hashed;
         }
 
-        private string GenerateSalt()
+        public string GenerateSalt()
         {
             // generate a 128-bit salt using a secure PRNG
             byte[] salt = new byte[128 / 8];

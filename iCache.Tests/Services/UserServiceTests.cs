@@ -5,7 +5,7 @@ using iCache.API.Services;
 using Xunit;
 using System.Linq;
 
-namespace iCache.Tests
+namespace iCache.Tests.Services
 {
     public class UserServiceTests
     {

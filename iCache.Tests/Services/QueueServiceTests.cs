@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using iCache.API.Services;
 using Xunit;
 
-namespace iCache.Tests
+namespace iCache.Tests.Services
 {
     public class QueueServiceTests
     {

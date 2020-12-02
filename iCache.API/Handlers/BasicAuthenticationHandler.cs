@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Security.Claims;
 using System.Collections.Generic;
+using iCache.API.Interfaces;
 
 namespace iCache.API.Handlers
 {

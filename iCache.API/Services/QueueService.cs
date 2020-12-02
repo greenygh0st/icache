@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using iCache.API.Interfaces;
 using TCache;
 
 namespace iCache.API.Services
 {
-    public class QueueService : IDisposable
+    public class QueueService : IDisposable, IQueueService
     {
         private TCacheService _cacheService;
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using iCache.API.Handlers;
 using iCache.API.Services;
+using iCache.API.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,8 @@ namespace iCache.API
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             // configure DI for application services
+            services.AddScoped<IKeyService, KeyService>();
+            services.AddScoped<IQueueService, QueueService>();
             services.AddScoped<IUserService, UserService>();
 
             // configure swagger

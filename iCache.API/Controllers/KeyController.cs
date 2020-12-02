@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using iCache.Common.Models;
 using iCache.API.Services;
+using iCache.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace iCache.API.Controllers
@@ -18,6 +19,13 @@ namespace iCache.API.Controllers
     [Authorize]
     public class KeyController : ControllerBase
     {
+        private readonly IKeyService _keyService;
+
+        public KeyController(IKeyService keyService)
+        {
+            _keyService = keyService;
+        }
+
         /// <summary>
         /// Get the value for the specified key from your user context
         /// </summary>
@@ -28,24 +36,23 @@ namespace iCache.API.Controllers
         {
             if (!string.IsNullOrEmpty(key))
             {
-                using (KeyService keyService = new KeyService())
+                string keyName = $"{User.Identity.Name}:{key}";
+                if (await _keyService.KeyExists(keyName))
                 {
-                    if (await keyService.KeyExists($"{User.Identity.Name}:{key}"))
+                    return new JsonWithResponse
                     {
-                        return new JsonWithResponse
+                        Message = "success",
+                        Response = new ValueItem
                         {
-                            Message = "success",
-                            Response = new ValueItem
-                            {
-                                Key = key,
-                                Value = await keyService.FetchKey($"{User.Identity.Name}:{key}")
-                            }
-                        };
-                    } else
-                    {
-                        Response.StatusCode = 404;
-                        return new JsonWithResponse { Message = "Key not found!" };
-                    }
+                            Key = key,
+                            Value = await _keyService.FetchKey($"{User.Identity.Name}:{key}")
+                        }
+                    };
+                }
+                else
+                {
+                    Response.StatusCode = 404;
+                    return new JsonWithResponse { Message = "Key not found!" };
                 }
             } else
             {
@@ -64,22 +71,19 @@ namespace iCache.API.Controllers
         {
             if (!string.IsNullOrEmpty(key))
             {
-                using (KeyService keyService = new KeyService())
+                if (await _keyService.KeyExists($"{User.Identity.Name}:{key}"))
                 {
-                    if (await keyService.KeyExists($"{User.Identity.Name}:{key}"))
-                    {
-                        await keyService.RemoveKey($"{User.Identity.Name}:{key}");
+                    await _keyService.RemoveKey($"{User.Identity.Name}:{key}");
 
-                        return new JsonStatus
-                        {
-                            Message = "Key deleted!"
-                        };
-                    }
-                    else
+                    return new JsonStatus
                     {
-                        Response.StatusCode = 404;
-                        return new JsonStatus { Message = "Key not found!" };
-                    }
+                        Message = "Key deleted!"
+                    };
+                }
+                else
+                {
+                    Response.StatusCode = 404;
+                    return new JsonStatus { Message = "Key not found!" };
                 }
             }
             else
@@ -99,27 +103,80 @@ namespace iCache.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (KeyService keyService = new KeyService())
-                {
-                    bool set = (value.Expiration == null) ?
-                        await keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value)
+                bool set = (value.Expiration == null) ?
+                        await _keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value)
                         :
-                        await keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value, (int)value.Expiration);
+                        await _keyService.SetKey($"{User.Identity.Name}:{value.Key}", value.Value, (int)value.Expiration);
 
-                    Response.StatusCode = 201;
-                    return new JsonWithResponse {
-                        Message = "created",
-                        Response = new ValueItem {
-                            Key = value.Key,
-                            Value = value.Value
-                        }
-                    };
-                }
+                Response.StatusCode = 201;
+                return new JsonWithResponse
+                {
+                    Message = "created",
+                    Response = new ValueItem
+                    {
+                        Key = value.Key,
+                        Value = value.Value
+                    }
+                };
             } else
             {
                 Response.StatusCode = 400;
                 return new JsonError {
                     Message = "Invalid key request!",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()
+                };
+            }
+        }
+
+        /// <summary>
+        /// Search for a specific key within a given user context. Searches are conducted by using one or more '*' in your search expression
+        /// </summary>
+        /// <param name="search"><see cref="KeySearch"/> search object</param>
+        /// <returns></returns>
+        [HttpPost("search")]
+        public async Task<JsonWithResponse> SearchKey([FromBody] KeySearch search)
+        {
+            if (ModelState.IsValid)
+            {
+                string searchVal = $"{User.Identity.Name}:{search.SearchTerm}";
+
+                object initialResponse = search.IncludeValues ? await _keyService.SearchKeysGetValues(searchVal) : await _keyService.SearchKeys(searchVal);
+
+                Dictionary<string, string> results = new Dictionary<string, string>();
+
+                if (results.Count == 0)
+                {
+                    // we need parse the result into a dictionary
+                    // then to fix the key values so they do not include the user id 
+                    if (search.IncludeValues)
+                    {
+                        var resFix = initialResponse as Dictionary<string, string>;
+                        foreach (var item in resFix)
+                        {
+                            results.Add(item.Key.Replace($"{User.Identity.Name}:", ""), item.Value);
+                        }
+                    }
+                    else
+                    {
+                        var resFix = initialResponse as List<string>;
+                        foreach (var item in resFix)
+                        {
+                            results.Add(item.Replace($"{User.Identity.Name}:", ""), "");
+                        }
+                    }
+                }
+
+                return new JsonWithResponse
+                {
+                    Message = "success",
+                    Response = results
+                };
+            } else
+            {
+                Response.StatusCode = 400;
+                return new JsonError
+                {
+                    Message = "Invalid key search request!",
                     Errors = ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()
                 };
             }
