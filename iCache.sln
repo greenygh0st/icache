@@ -1,22 +1,22 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.API", "iCache.API\iCache.API.csproj", "{032F65C6-3D16-4294-9EB6-469BC25A2391}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iCache.API", "iCache.API\iCache.API.csproj", "{032F65C6-3D16-4294-9EB6-469BC25A2391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Tests", "iCache.Tests\iCache.Tests.csproj", "{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iCache.Tests", "iCache.Tests\iCache.Tests.csproj", "{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F84ADB3D-99DB-421F-936C-03BA3C5978B5}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-		Dockerfile = Dockerfile
 		global.json = global.json
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Client", "iCache.Client\iCache.Client.csproj", "{A8352746-670F-46B9-BBA4-B06705B5A6BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iCache.Client", "iCache.Client\iCache.Client.csproj", "{A8352746-670F-46B9-BBA4-B06705B5A6BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Common", "iCache.Common\iCache.Common.csproj", "{4FE2AB5D-ADF8-49DC-8FF6-9DA2A781F1A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iCache.Common", "iCache.Common\iCache.Common.csproj", "{4FE2AB5D-ADF8-49DC-8FF6-9DA2A781F1A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Tests.Client", "iCache.Tests.Client\iCache.Tests.Client.csproj", "{1B50EF49-BD0F-4167-B4B8-732B2B7C5CF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iCache.Tests.Client", "iCache.Tests.Client\iCache.Tests.Client.csproj", "{1B50EF49-BD0F-4167-B4B8-732B2B7C5CF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +32,6 @@ Global
 		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8352746-670F-46B9-BBA4-B06705B5A6BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A8352746-670F-46B9-BBA4-B06705B5A6BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8352746-670F-46B9-BBA4-B06705B5A6BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,6 +44,12 @@ Global
 		{1B50EF49-BD0F-4167-B4B8-732B2B7C5CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B50EF49-BD0F-4167-B4B8-732B2B7C5CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B50EF49-BD0F-4167-B4B8-732B2B7C5CF8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9F67353F-5B98-489D-958E-B1E995DC038B}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		version = 0.9.0

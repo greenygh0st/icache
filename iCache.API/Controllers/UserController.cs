@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using iCache.Common.Models;
 using iCache.API.Services;
+using iCache.API.Interfaces;
 
 namespace iCache.API.Controllers
 {
@@ -18,6 +19,17 @@ namespace iCache.API.Controllers
     [Authorize(Roles="Admin")]
     public class UserController : ControllerBase
     {
+        IUserService _userService;
+
+        /// <summary>
+        /// Base contructor
+        /// </summary>
+        /// <param name="userService">Service injection</param>
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         /// <summary>
         /// Create a user. Note: Only accessible with the pre-defined admin credentials.
         /// </summary>
@@ -28,12 +40,9 @@ namespace iCache.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (UserService userService = new UserService())
-                {
-                    User user = await userService.CreateUser(createUser);
+                User user = await _userService.CreateUser(createUser);
 
-                    return new JsonWithResponse { Message = "created", Response = user };
-                }
+                return new JsonWithResponse { Message = "created", Response = user };
             } else
             {
                 Response.StatusCode = 400;
@@ -53,18 +62,18 @@ namespace iCache.API.Controllers
         [HttpDelete("{userId}")]
         public async Task<JsonWithResponse> RemoveUser(Guid userId)
         {
-            using (UserService userService = new UserService())
-            {
-                if (await userService.UserExists(new User { _Id = userId }))
-                {
-                    await userService.RemoveUser(new User { _Id = userId });
+            User _user = new User { _Id = userId };
 
-                    return new JsonWithResponse { Message = "User removed!" };
-                } else
-                {
-                    Response.StatusCode = 404;
-                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
-                }
+            if (await _userService.UserExists(_user))
+            {
+                await _userService.RemoveUser(_user);
+
+                return new JsonWithResponse { Message = "User removed!" };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
             }
         }
 
@@ -76,19 +85,16 @@ namespace iCache.API.Controllers
         [HttpPost("{userId}/password")]
         public async Task<JsonWithResponse> RegenUserPassword(Guid userId)
         {
-            using (UserService userService = new UserService())
+            if (await _userService.UserExists(new User { _Id = userId }))
             {
-                if (await userService.UserExists(new User { _Id = userId }))
-                {
-                    User userWithNewPassword = await userService.RegeneratePassword(new User { _Id = userId });
+                User userWithNewPassword = await _userService.RegeneratePassword(new User { _Id = userId });
 
-                    return new JsonWithResponse { Message = "success", Response = userWithNewPassword };
-                }
-                else
-                {
-                    Response.StatusCode = 404;
-                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
-                }
+                return new JsonWithResponse { Message = "success", Response = userWithNewPassword };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
             }
         }
 
@@ -100,19 +106,16 @@ namespace iCache.API.Controllers
         [HttpGet("{userId}/lock")]
         public async Task<JsonStatus> LockUserAccount(Guid userId)
         {
-            using (UserService userService = new UserService())
+            if (await _userService.UserExists(new User { _Id = userId }))
             {
-                if (await userService.UserExists(new User { _Id = userId }))
-                {
-                    bool locked = await userService.LockUser(new User { _Id = userId });
+                bool locked = await _userService.LockUser(new User { _Id = userId });
 
-                    return new JsonStatus { Message = $"User account {userId} locked!" };
-                }
-                else
-                {
-                    Response.StatusCode = 404;
-                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
-                }
+                return new JsonStatus { Message = $"User account {userId} locked!" };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
             }
         }
 
@@ -124,19 +127,16 @@ namespace iCache.API.Controllers
         [HttpGet("{userId}/unlock")]
         public async Task<JsonStatus> UnlockUserAccount(Guid userId)
         {
-            using (UserService userService = new UserService())
+            if (await _userService.UserExists(new User { _Id = userId }))
             {
-                if (await userService.UserExists(new User { _Id = userId }))
-                {
-                    bool unlocked = await userService.UnlockUser(new User { _Id = userId });
+                bool unlocked = await _userService.UnlockUser(new User { _Id = userId });
 
-                    return new JsonStatus { Message = $"User account {userId} unlocked!" };
-                }
-                else
-                {
-                    Response.StatusCode = 404;
-                    return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
-                }
+                return new JsonStatus { Message = $"User account {userId} unlocked!" };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonError { Message = "Not found", Errors = new List<string> { $"{userId} was not found!" } };
             }
         }
     }

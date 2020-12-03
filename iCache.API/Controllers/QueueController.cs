@@ -7,6 +7,7 @@ using iCache.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using iCache.API.Interfaces;
 
 namespace iCache.API.Controllers
 {
@@ -18,6 +19,17 @@ namespace iCache.API.Controllers
     [Authorize]
     public class QueueController : ControllerBase
     {
+        private readonly IQueueService _queueService;
+
+        /// <summary>
+        /// Base constructor
+        /// </summary>
+        /// <param name="queueService">Queue service</param>
+        public QueueController(IQueueService queueService)
+        {
+            _queueService = queueService;
+        }
+
         /// <summary>
         /// Pop a message from a queue. Using this method the popped message remains in the queue until delete is called. Note: Queues are not user context specific.
         /// </summary>
@@ -26,25 +38,24 @@ namespace iCache.API.Controllers
         [HttpGet("{queueName}")]
         public async Task<JsonWithResponse> PopFromQueue(string queueName)
         {
-            using (QueueService queueService = new QueueService())
+            if (await _queueService.QueueExists(queueName))
             {
-                if (await queueService.QueueExists(queueName))
-                {
-                    string message = await queueService.PullFromQueue(queueName, false);
+                string message = await _queueService.PullFromQueue(queueName, false);
 
-                    return new JsonWithResponse {
-                        Message = "success",
-                        Response = new QueueMessage
-                        {
-                            QueueName = queueName,
-                            Message = message
-                        }
-                    };
-                } else
+                return new JsonWithResponse
                 {
-                    Response.StatusCode = 404;
-                    return new JsonWithResponse { Message = "Queue not found or is empty!" };
-                }
+                    Message = "success",
+                    Response = new QueueMessage
+                    {
+                        QueueName = queueName,
+                        Message = message
+                    }
+                };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonWithResponse { Message = "Queue not found or is empty!" };
             }
         }
 
@@ -56,24 +67,24 @@ namespace iCache.API.Controllers
         [HttpDelete("{queueName}")]
         public async Task<JsonWithResponse> DeleteFromQueue(string queueName)
         {
-            using (QueueService queueService = new QueueService())
+            if (await _queueService.QueueExists(queueName))
             {
-                if (await queueService.QueueExists(queueName))
-                {
-                    string message = await queueService.PullFromQueue(queueName, true);
+                string message = await _queueService.PullFromQueue(queueName, true);
 
-                    return new JsonWithResponse { Message = "deleted",
+                return new JsonWithResponse
+                {
+                    Message = "deleted",
                     Response = new QueueMessage
                     {
                         QueueName = queueName,
                         Message = message
-                    }};
-                }
-                else
-                {
-                    Response.StatusCode = 404;
-                    return new JsonWithResponse { Message = "Queue not found or is empty!" };
-                }
+                    }
+                };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+                return new JsonWithResponse { Message = "Queue not found or is empty!" };
             }
         }
 
@@ -87,13 +98,9 @@ namespace iCache.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (QueueService queueService = new QueueService())
-                {
-                    await queueService.PushToQueue(queueMessages.QueueName, queueMessages.Messages);
-                    
-                    return new JsonWithResponse { Message = $"Added {queueMessages.Messages.Count} to queue: {queueMessages.QueueName}" };
-                    
-                }
+                await _queueService.PushToQueue(queueMessages.QueueName, queueMessages.Messages);
+
+                return new JsonWithResponse { Message = $"Added {queueMessages.Messages.Count} to queue: {queueMessages.QueueName}" };
             } else
             {
                 Response.StatusCode = 400;

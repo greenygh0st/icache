@@ -80,12 +80,15 @@ namespace iCache.API.Services
         /// <returns></returns>
         public async Task<User> CreateUser(CreateUser user)
         {
+            if (string.IsNullOrEmpty(user.DisplayName))
+                throw new ArgumentException("You must provide a display name!");
+
             var (Hashed, Plaintext) = await CreateAndHashPassword();
 
             User newUser = new User
             {
                 _Id = Guid.NewGuid(),
-                DisplayName = user.DisplayName,
+                DisplayName = user.DisplayName.Trim(),
                 Password = Hashed,
                 LoginAttempts = 0,
                 Locked = false
