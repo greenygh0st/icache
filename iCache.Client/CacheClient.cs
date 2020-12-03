@@ -123,6 +123,47 @@ namespace iCache.Client
         }
 
         /// <summary>
+        /// Search for a key
+        /// </summary>
+        /// <param name="searchTerm">The term you want to search for. Include a '*' character in your search for unknown portions. (ie 'toy' = '*oy', 'to*', 't*y', '*o*')</param>
+        /// <param name="includeValues">Whether or not you want the search to return the values along with thier keys</param>
+        /// <returns></returns>
+        public async Task<Dictionary<string, string>> SearchKeys(string searchTerm, bool includeValues = true)
+        {
+            StringContent stringContent =
+                new StringContent(
+                    JsonConvert.SerializeObject(new KeySearch
+                    {
+                        SearchTerm = searchTerm,
+                        IncludeValues = includeValues
+                    }),
+                    Encoding.UTF8,
+                    "application/json");
+
+            var response = await _httpClient.PostAsync($"{_serviceUri}/api/key/search", stringContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            }
+            else
+            {
+                if (response.StatusCode != HttpStatusCode.InternalServerError)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    JsonError error = JsonConvert.DeserializeObject<JsonError>(json);
+                    throw new Exception(string.Join(". ", error.Errors));
+                }
+                else
+                {
+                    throw new Exception(ServerErrorMessage);
+                }
+            }
+        }
+
+        /// <summary>
         /// Set a key with a given key name and value
         /// </summary>
         /// <param name="keyName">The name of the key you want to set</param>

@@ -9,6 +9,7 @@ namespace iCache.Common.Models
     public class ValueItem : KeyItem
     {
         [Required]
+        [MinLength(1)]
         public string Value { get; set; }
     }
 }

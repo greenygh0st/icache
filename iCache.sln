@@ -5,12 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.API", "iCache.API\iC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Tests", "iCache.Tests\iCache.Tests.csproj", "{2CD2CFF5-5A05-4FAD-B2F9-0B958B74314D}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6B2185CB-0D9A-4F44-B552-4EB3F63A8E94}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F84ADB3D-99DB-421F-936C-03BA3C5978B5}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		Dockerfile = Dockerfile
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCache.Client", "iCache.Client\iCache.Client.csproj", "{A8352746-670F-46B9-BBA4-B06705B5A6BD}"
