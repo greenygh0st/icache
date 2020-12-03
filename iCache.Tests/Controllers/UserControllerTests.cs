@@ -27,12 +27,14 @@ namespace iCache.Tests.Controllers
             _fakeGuid = Guid.Parse("e5b0a652-28eb-4f18-bdca-960db253a0a5");
             _user = new User { _Id = _fakeGuid };
 
+
+
             // stub mock
             _mockService = new Mock<IUserService>();
 
-
             // setup service
-            _mockService.Setup(x => x.UserExists(_user)).ReturnsAsync(true);
+            //var validUser = It.Is<User>(x => x._Id.ToString() == "e5b0a652-28eb-4f18-bdca-960db253a0a5");
+            _mockService.Setup(x => x.UserExists(It.Is<User>(x => x._Id.ToString() == "e5b0a652-28eb-4f18-bdca-960db253a0a5"))).ReturnsAsync(true);
 
             // setup controller
             _userController = new UserController(_mockService.Object);
@@ -80,44 +82,65 @@ namespace iCache.Tests.Controllers
         [Fact]
         public async Task RemoveUser()
         {
-            // JsonWithResponse response = await _userController.RemoveUser(_user._Id);
-            // Assert.Equal("User removed!", response.Message);
+            JsonWithResponse response = await _userController.RemoveUser(_user._Id);
+            Assert.Equal("User removed!", response.Message);
         }
 
         [Fact]
-        public async Task RegenUserPassword_BadModel()
+        public async Task RegenUserPassword_MissingUser()
         {
+            Guid noGuid = Guid.NewGuid();
+            JsonWithResponse response = await _userController.RegenUserPassword(noGuid);
+            Assert.Equal("Not found", response.Message);
 
+            JsonError errorResponse = response as JsonError;
+
+            Assert.Equal($"{noGuid} was not found!", errorResponse.Errors.Single());
         }
 
         [Fact]
         public async Task RegenUserPasswordUser()
         {
-
+            JsonWithResponse response = await _userController.RegenUserPassword(_user._Id);
+            Assert.Equal("success", response.Message);
         }
 
         [Fact]
-        public async Task LockUserAccount_BadModel()
+        public async Task LockUserAccount_MissingUser()
         {
+            Guid noGuid = Guid.NewGuid();
+            JsonStatus response = await _userController.LockUserAccount(noGuid);
+            Assert.Equal("Not found", response.Message);
 
+            JsonError errorResponse = response as JsonError;
+
+            Assert.Equal($"{noGuid} was not found!", errorResponse.Errors.Single());
         }
 
         [Fact]
         public async Task LockUserAccount()
         {
-
+            JsonStatus response = await _userController.LockUserAccount(_user._Id);
+            Assert.Equal($"User account {_user._Id} locked!", response.Message);
         }
 
         [Fact]
-        public async Task UnlockUserAccount_BadModel()
+        public async Task UnlockUserAccount_MissingUser()
         {
+            Guid noGuid = Guid.NewGuid();
+            JsonStatus response = await _userController.UnlockUserAccount(noGuid);
+            Assert.Equal("Not found", response.Message);
 
+            JsonError errorResponse = response as JsonError;
+
+            Assert.Equal($"{noGuid} was not found!", errorResponse.Errors.Single());
         }
 
         [Fact]
         public async Task UnlockUserAccount()
         {
-
+            JsonStatus response = await _userController.UnlockUserAccount(_user._Id);
+            Assert.Equal($"User account {_user._Id} unlocked!", response.Message);
         }
     }
 }
