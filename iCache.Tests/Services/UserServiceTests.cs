@@ -48,6 +48,17 @@ namespace iCache.Tests.Services
         }
 
         [Fact]
+        public async Task CreateUser_NoNullDisplayName()
+        {
+            using (UserService userService = new UserService())
+            {
+                ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(async () => await userService.CreateUser(new CreateUser { }));
+
+                Assert.Equal("You must provide a display name!", exception.Message);
+            }
+        }
+
+        [Fact]
         public async Task GetUser()
         {
             using (UserService userService = new UserService())
