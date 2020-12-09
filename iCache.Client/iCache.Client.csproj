@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <PackageId>iCache.Redis.Client</PackageId>
-    <PackageVersion>0.9.3</PackageVersion>
+    <PackageVersion>0.9.4</PackageVersion>
     <Authors>Dale Myszewski &lt;dale@bubblelabs.dev&gt;</Authors>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageProjectUrl>https://github.com/greenygh0st/icache/tree/master/iCache.Client</PackageProjectUrl>
     <Title>iCache.Redis.Client</Title>
-    <ReleaseVersion>0.9.3</ReleaseVersion>
+    <ReleaseVersion>0.9.4</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>This is the client for iCache. See the documentation: https://github.com/greenygh0st/icache/tree/master/iCache.Client</Description>
   </PropertyGroup>

@@ -171,6 +171,13 @@ namespace iCache.Client
         /// <returns></returns>
         public async Task<(bool Success, string FailReason)> SetKey(string keyName, object value)
         {
+            // null checks
+            if (string.IsNullOrEmpty(keyName))
+                throw new ArgumentException("You must supply a value for keyName", "keyName");
+
+            if (string.IsNullOrEmpty(keyName))
+                throw new ArgumentException("You must supply a value for the key", "value");
+
             string valueToStore = (value is string) ? value.ToString() : JsonConvert.SerializeObject(value);
 
             StringContent stringContent =
@@ -211,6 +218,13 @@ namespace iCache.Client
         /// <returns></returns>
         public async Task<(bool Success, string FailReason)> SetKey(string keyName, object value, TimeSpan expiration)
         {
+            // null checks
+            if (string.IsNullOrEmpty(keyName))
+                throw new ArgumentException("You must supply a value for keyName", "keyName");
+
+            if (value == null)
+                throw new ArgumentException("You must supply a value for the key", "value");
+
             string valueToStore = (value is string) ? value.ToString() : JsonConvert.SerializeObject(value);
 
             StringContent stringContent =
